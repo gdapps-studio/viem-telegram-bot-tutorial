@@ -1,28 +1,38 @@
-import { Bot } from "grammy";
+import {Bot, InlineKeyboard} from "grammy";
 import env from "./env.js";
+import {DESCRIPTION, ENDING_TEXT, TITLE} from "./constants.js";
 
 const bot = new Bot(env.BOT_TOKEN);
-
 
 const COMMANDS = {
     readBlockNumber: 'readBlockNumber',
     getTransactionCount: 'getTransactionCount',
-
-
 }
 
-bot.command(COMMANDS.readBlockNumber, async (c) => {
-   await c.reply("readBlockNumber")
+bot.callbackQuery(COMMANDS.readBlockNumber, async (ctx) => {
+    await ctx.answerCallbackQuery("reading block number")
 })
 
-bot.command(COMMANDS.readBlockNumber, async (c) => {
-    await c.reply("readBlockNumber")
+bot.callbackQuery(COMMANDS.getTransactionCount, async (ctx) => {
+    await ctx.answerCallbackQuery("get transaction count")
 })
 
-bot.command(COMMANDS.readBlockNumber, async (c) => {
-    await c.reply("readBlockNumber")
-})
+bot.command('start', async (ctx) => {
+    const keyboard = new InlineKeyboard()
+    Object.values(COMMANDS).forEach((keyboardElement) => {
+        keyboard.row().text(keyboardElement, keyboardElement)
+    })
 
-bot.on("message", (ctx) => ctx.reply("Hi there!"));
+    await ctx.reply(`
+    <b>${TITLE}</b>
+    
+    ${DESCRIPTION}
+    
+    <b>${ENDING_TEXT}</b>
+    `, {
+        parse_mode: "HTML", reply_markup: keyboard
+    });
+
+})
 
 bot.start();
