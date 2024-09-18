@@ -4,16 +4,13 @@ import {DESCRIPTION, ENDING_TEXT, TITLE} from "./constants.js";
 
 const bot = new Bot(env.BOT_TOKEN);
 
-// TODO maybe automate the process of adding a command and extended properties and based on the config code takes care of displaying the buttons, creating callback queries and implementing actions
-// TODO maybe wrap a command in a class where all the logic leaves.
-
 type Actions = 'readBlockNumber' | 'getBalance' | 'getTransactionCount'
 type ActionObject = {
     key: Actions,
     name: string,
     action: (ctx: Context) => (void | Promise<void>)
 }
-// TODO add third action here
+
 const COMMANDS: Record<Actions, ActionObject> = {
     readBlockNumber: {
         key: 'readBlockNumber', action:async  (ctx: Context) => {
@@ -25,14 +22,12 @@ const COMMANDS: Record<Actions, ActionObject> = {
     getBalance: {
         key: 'getBalance', action: (ctx: Context) => {
             console.log('getting balance')
-
         },
         name: 'Get Balance'
     },
     getTransactionCount: {
         key: 'getTransactionCount', action: (ctx: Context) => {
             console.log('transaction count')
-
         },
         name: 'Get Transaction Count'
     },
@@ -52,13 +47,12 @@ bot.command('start', async (ctx) => {
     Object.values(COMMANDS).forEach((c) => {
         keyboard.row().text(c.name, c.key)
     })
-
     await ctx.reply(`
-    <b>${TITLE}</b>
+<b>${TITLE}</b>
     
-    ${DESCRIPTION}
+${DESCRIPTION}
     
-    <b>${ENDING_TEXT}</b>
+<b>${ENDING_TEXT}</b>
     `, {
         parse_mode: "HTML", reply_markup: keyboard
     });
