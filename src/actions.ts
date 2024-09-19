@@ -3,6 +3,7 @@ import { publicClient } from './client.js';
 import { Api, type Bot, type RawApi } from 'grammy';
 
 export type Actions = 'readBlockNumber' | 'getBalance' | 'getTransactionCount';
+
 type ActionObject = {
   key: Actions;
   name: string;

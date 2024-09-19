@@ -10,6 +10,7 @@ export type MyContext = Context & ConversationFlavor;
 
 export const launchBot = async () => {
   conversationSetup(bot);
+
   initActionsCallbackQueries(bot);
 
   bot.command('start', async (ctx) => {
