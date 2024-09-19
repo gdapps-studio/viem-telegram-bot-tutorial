@@ -6,29 +6,23 @@ import {
   conversations,
   createConversation,
 } from '@grammyjs/conversations';
-import { Api, type Bot, InlineKeyboard, type RawApi, session } from 'grammy';
-import { ACTIONS } from './actions.js';
+import { Api, type Bot, InlineKeyboard, type RawApi } from 'grammy';
+import { actionKeys, ACTIONS, type Actions } from './actions/constants.js';
 
 type MyConversation = Conversation<MyContext>;
-
-const replyWithAskingAddress = (ctx: MyContext) =>
-  ctx.reply('What is your eth addresss');
-
-const replyWithInvalidAddressMessage = async (
-  ctx: MyContext,
-  address: string | undefined,
-) => ctx.reply(`Invalid address: ${address}. Please try again`);
 
 async function checkForAddressValidity(
   conversation: MyConversation,
   ctx: MyContext,
   onValidAddress?: (address: Address) => void,
 ) {
-  await replyWithAskingAddress(ctx);
+  await ctx.reply('What is your eth address');
   const { message } = await conversation.wait();
 
   if (message?.text === undefined || !isAddress(message?.text))
-    await replyWithInvalidAddressMessage(ctx, message?.text);
+    await ctx.reply(
+      `Invalid address: ${message?.text || '<empty text>'}. Please try again`,
+    );
   else onValidAddress?.(message.text);
 }
 
@@ -58,16 +52,18 @@ export const getTransactionCountConvo = (
   });
 
 export const conversationSetup = (bot: Bot<MyContext, Api<RawApi>>) => {
-  bot.use(session({ initial: () => ({}) }));
   bot.use(conversations());
   bot.use(createConversation(getBalanceAddressConvo));
   bot.use(createConversation(getTransactionCountConvo));
 };
 
+export const addActionToKeyboard = (cKey: string, keyboard: InlineKeyboard) => {
+  const currentAction = ACTIONS[cKey as Actions];
+  keyboard.row().text(currentAction.name, cKey);
+};
+
 export const createCommandButtons = () => {
   const keyboard = new InlineKeyboard();
-  Object.values(ACTIONS).forEach((c) => {
-    keyboard.row().text(c.name, c.key);
-  });
+  actionKeys.forEach((cKey) => addActionToKeyboard(cKey, keyboard));
   return keyboard;
 };
