@@ -17,7 +17,7 @@ const replyWithAskingAddress = (ctx: MyContext) =>
 const replyWithInvalidAddressMessage = async (
   ctx: MyContext,
   address: string | undefined,
-) => ctx.reply(`Invalid address: ${address}`);
+) => ctx.reply(`Invalid address: ${address}. Please try again`);
 
 async function checkForAddressValidity(
   conversation: MyConversation,
@@ -40,7 +40,10 @@ export const getBalanceAddressConvo = (
     const balance = await publicClient.getBalance({
       address,
     });
-    await ctx.reply(`Balance: ${Number(formatEther(balance)).toFixed(5)} ETH`);
+    const balanceInNumber = +formatEther(balance);
+    await ctx.reply(
+      `Balance: ${balanceInNumber === 0 ? balanceInNumber : balanceInNumber.toFixed(5)} ETH`,
+    );
   });
 
 export const getTransactionCountConvo = (
