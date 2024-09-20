@@ -1,5 +1,7 @@
-const url =
-  'https://api.telegram.org/bot7512821175:AAG2ur0KA2TILdRacgz4JJLhvcxrIXcqGWU';
+import { config } from 'dotenv';
+config();
+
+const url = `https://api.telegram.org/${process.env.BOT_TOKEN}`;
 
 void (async function () {
   const rsult = await fetch(`${url}/setMyCommands`, {
