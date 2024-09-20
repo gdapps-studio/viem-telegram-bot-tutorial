@@ -18,6 +18,9 @@ The bot is configured to use the `BOT_TOKEN` from the `.env` file. Make sure to 
 
 After installation and configuration, you can start the bot by running `pnpm dev`. This will start the bot and it will be ready to receive messages and commands.
 
+## Socials
+Make sure to follower me on [X](https://x.com/GdappsStudio) and [Youtube](https://www.youtube.com/@GDappsStudio)
+
 ## License
 
 This project is licensed under the MIT License.
