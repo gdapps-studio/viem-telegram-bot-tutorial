@@ -1,24 +1,36 @@
-import { Bot, type Context } from 'grammy';
+import { Bot } from 'grammy';
 import env from './env.js';
-import { WELCOME_HTML_TEXT } from './constants.js';
-import { type ConversationFlavor } from '@grammyjs/conversations';
-import { conversationSetup, createCommandButtons } from './conversations.js';
-import { sessionMiddleware } from './session.js';
-import { initActionsCallbackQueries } from './actions/index.js';
+import { ActionHandler } from './handlers/actoin-handler.js';
+import { ConversationHandler } from './handlers/conversation-handler.js';
+import { SessionHandler } from './handlers/session-handler.js';
+import type { MyContext } from './types/index.js';
+import { CommandHandler } from './handlers/command-handler.js';
 
-const bot = new Bot<MyContext>(env.BOT_TOKEN);
-export type MyContext = Context & ConversationFlavor;
+export class ViemTelegramBot {
+  bot: Bot<MyContext>;
 
-export const launchBot = async () => {
-  bot.use(sessionMiddleware);
-  conversationSetup(bot);
-  initActionsCallbackQueries(bot);
-  bot.command('start', (ctx) =>
-    ctx.reply(WELCOME_HTML_TEXT, {
-      parse_mode: 'HTML',
-      reply_markup: createCommandButtons(),
-    }),
-  );
+  // Handlers
+  conversationHandler: ConversationHandler;
+  actionHandler: ActionHandler;
+  sessionHandler: SessionHandler;
+  commandHandler: CommandHandler;
 
-  void bot.start();
-};
+  constructor() {
+    this.bot = new Bot<MyContext>(env.BOT_TOKEN);
+    this.conversationHandler = new ConversationHandler(this.bot);
+    this.actionHandler = new ActionHandler(this.bot);
+    this.sessionHandler = new SessionHandler(this.bot);
+    this.commandHandler = new CommandHandler(this.bot);
+  }
+
+  init() {
+    this.sessionHandler.setupSession();
+    this.conversationHandler.setupConversations();
+    this.actionHandler.setupCallbackQueries();
+    this.commandHandler.setupCommands();
+  }
+
+  start() {
+    void this.bot.start();
+  }
+}

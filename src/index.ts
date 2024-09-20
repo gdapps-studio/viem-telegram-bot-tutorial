@@ -1,3 +1,5 @@
-import { launchBot } from './bot.js';
+import { ViemTelegramBot } from './bot.js';
 
-void launchBot();
+const bot = new ViemTelegramBot();
+bot.init();
+bot.start();

@@ -1,5 +1,6 @@
-import type { MyContext } from '../bot.js';
 import { publicClient } from '../client.js';
+import type { MyContext } from '../types/index.js';
+
 export type Actions = 'readBlockNumber' | 'getBalance' | 'getTransactionCount';
 
 export type ActionObject = {
@@ -7,12 +8,14 @@ export type ActionObject = {
   action: (ctx: MyContext) => void | Promise<void>;
 };
 
+export const getBlockNumberAction = async (ctx: MyContext) => {
+  const currentBlockNumber = await publicClient.getBlockNumber();
+  await ctx.reply(`Current Block Number: ${currentBlockNumber}`);
+};
+
 export const ACTIONS: Record<Actions, ActionObject> = {
   readBlockNumber: {
-    action: async (ctx: MyContext) => {
-      const currentBlockNumber = await publicClient.getBlockNumber();
-      await ctx.reply(`Current Block Number: ${currentBlockNumber}`);
-    },
+    action: getBlockNumberAction,
     name: 'Read Block Number',
   },
   getBalance: {
